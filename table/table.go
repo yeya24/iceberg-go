@@ -23,6 +23,7 @@ import (
 	stdio "io"
 	"iter"
 	"log"
+	"math/rand"
 	"runtime"
 	"slices"
 	"time"
@@ -33,6 +34,7 @@ import (
 	"github.com/apache/iceberg-go/internal"
 	"github.com/apache/iceberg-go/io"
 	tblutils "github.com/apache/iceberg-go/table/internal"
+	"github.com/oklog/ulid"
 	"github.com/parquet-go/parquet-go"
 	"golang.org/x/sync/errgroup"
 )
