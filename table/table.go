@@ -19,10 +19,13 @@ package table
 
 import (
 	"context"
+	"fmt"
+	stdio "io"
 	"iter"
 	"log"
 	"runtime"
 	"slices"
+	"time"
 
 	"github.com/apache/arrow-go/v18/arrow"
 	"github.com/apache/arrow-go/v18/arrow/array"
@@ -30,6 +33,7 @@ import (
 	"github.com/apache/iceberg-go/internal"
 	"github.com/apache/iceberg-go/io"
 	tblutils "github.com/apache/iceberg-go/table/internal"
+	"github.com/parquet-go/parquet-go"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -385,4 +389,109 @@ func NewFromLocation(
 	}
 
 	return New(ident, meta, metalocation, fsysF, cat), nil
+}
+
+// SnapshotWriter is an interface for writing a new snapshot to a table.
+type SnapshotWriter interface {
+	// Append accepts a ReaderAt object that should read the Parquet file that is to be added to the snapshot.
+	Append(ctx context.Context, r stdio.Reader) error
+
+	// DeleteDataFile deletes a data file from the table. The function passed to this method should return true if the file should be deleted.
+	DeleteDataFile(ctx context.Context, del func(file iceberg.DataFile) bool) error
+
+	// Close writes the new snapshot to the table and closes the writer. It is an error to call Append after Close.
+	Close(ctx context.Context) error
+}
+
+type WriterOption func(*writerOptions)
+
+type writerOptions struct {
+	fastAppendMode              bool
+	manifestSizeBytes           int
+	mergeSchema                 bool
+	expireSnapshotsOlderThan    time.Duration
+	metadataDeleteAfterCommit   bool
+	metadataPreviousVersionsMax int
+
+	logger log.Logger
+}
+
+func WithLogger(logger log.Logger) WriterOption {
+	return func(o *writerOptions) {
+		o.logger = logger
+	}
+}
+
+func WithMetadataDeleteAfterCommit() WriterOption {
+	return func(o *writerOptions) {
+		o.metadataDeleteAfterCommit = true
+	}
+}
+
+func WithMetadataPreviousVersionsMax(n int) WriterOption {
+	return func(o *writerOptions) {
+		o.metadataPreviousVersionsMax = n
+	}
+}
+
+func WithExpireSnapshotsOlderThan(d time.Duration) WriterOption {
+	return func(o *writerOptions) {
+		o.expireSnapshotsOlderThan = d
+	}
+}
+
+func WithMergeSchema() WriterOption {
+	return func(o *writerOptions) {
+		o.mergeSchema = true
+	}
+}
+
+func WithFastAppend() WriterOption {
+	return func(o *writerOptions) {
+		o.fastAppendMode = true
+	}
+}
+
+func WithManifestSizeBytes(size int) WriterOption {
+	return func(o *writerOptions) {
+		o.manifestSizeBytes = size
+	}
+}
+
+func generateULID() ulid.ULID {
+	t := time.Now()
+	entropy := ulid.Monotonic(rand.New(rand.NewSource(t.UnixNano())), 0)
+	return ulid.MustNew(ulid.Timestamp(t), entropy)
+}
+
+func parquetSchemaToIcebergSchema(id int, schema *parquet.Schema) *iceberg.Schema {
+	fields := make([]iceberg.NestedField, 0, len(schema.Fields()))
+	for i, f := range schema.Fields() {
+		fields = append(fields, iceberg.NestedField{
+			Type:     parquetTypeToIcebergType(f.Type()),
+			ID:       i,
+			Name:     f.Name(),
+			Required: f.Required(),
+		})
+	}
+	return iceberg.NewSchema(id, fields...)
+}
+
+func parquetTypeToIcebergType(t parquet.Type) iceberg.Type {
+	switch tp := t.Kind(); tp {
+	case parquet.Boolean:
+		return iceberg.BooleanType{}
+	case parquet.Int32:
+		return iceberg.Int32Type{}
+	case parquet.Int64:
+		return iceberg.Int64Type{}
+	case parquet.Float:
+		return iceberg.Float32Type{}
+	case parquet.Double:
+		return iceberg.Float64Type{}
+	case parquet.ByteArray:
+		return iceberg.BinaryType{}
+	default:
+		panic(fmt.Sprintf("unsupported parquet type: %v", tp))
+	}
 }

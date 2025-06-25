@@ -19,7 +19,7 @@ module github.com/apache/iceberg-go
 
 go 1.24
 
-toolchain go1.24.2
+toolchain go1.24.0
 
 require (
 	cloud.google.com/go/storage v1.51.0
@@ -35,10 +35,12 @@ require (
 	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
 	github.com/google/uuid v1.6.0
 	github.com/hamba/avro/v2 v2.29.0
+	github.com/parquet-go/parquet-go v0.25.1
 	github.com/pterm/pterm v0.12.81
 	github.com/stretchr/testify v1.10.0
 	github.com/substrait-io/substrait-go/v3 v3.9.1
 	github.com/testcontainers/testcontainers-go/modules/compose v0.37.0
+	github.com/thanos-io/objstore v0.0.0-20250317105316-a0136a6f898d
 	github.com/twmb/murmur3 v1.1.8
 	github.com/uptrace/bun v1.2.14
 	github.com/uptrace/bun/dialect/mssqldialect v1.2.14
@@ -135,6 +137,7 @@ require (
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/ebitengine/purego v0.8.2 // indirect
+	github.com/efficientgo/core v1.0.0-rc.0.0.20221201130417-ba593f67d2a4 // indirect
 	github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
 	github.com/envoyproxy/go-control-plane/envoy v1.32.4 // indirect
@@ -145,6 +148,8 @@ require (
 	github.com/fvbommel/sortorder v1.1.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
+	github.com/go-kit/log v0.2.1 // indirect
+	github.com/go-logfmt/logfmt v0.5.1 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
