@@ -343,6 +343,26 @@ func (t *Transaction) AddFiles(ctx context.Context, files []string, snapshotProp
 	return t.apply(updates, reqs)
 }
 
+func (t *Transaction) AddDataFiles(ctx context.Context, dataFiles []iceberg.DataFile, snapshotProps iceberg.Properties) error {
+	fs, err := t.tbl.fsF(ctx)
+	if err != nil {
+		return err
+	}
+
+	updater := t.updateSnapshot(fs, snapshotProps).fastAppend()
+
+	for _, df := range dataFiles {
+		updater.appendDataFile(df)
+	}
+
+	updates, reqs, err := updater.commit()
+	if err != nil {
+		return err
+	}
+
+	return t.apply(updates, reqs)
+}
+
 func (t *Transaction) Scan(opts ...ScanOption) (*Scan, error) {
 	updatedMeta, err := t.meta.Build()
 	if err != nil {
