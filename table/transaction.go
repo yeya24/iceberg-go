@@ -134,6 +134,10 @@ func (t *Transaction) updateSnapshot(fs io.IO, props iceberg.Properties) snapsho
 	}
 }
 
+func (t *Transaction) GetMetaBuilder() *MetadataBuilder {
+	return t.meta
+}
+
 func (t *Transaction) SetProperties(props iceberg.Properties) error {
 	if len(props) > 0 {
 		return t.apply([]Update{NewSetPropertiesUpdate(props)}, nil)
