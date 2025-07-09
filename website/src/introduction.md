@@ -1,38 +1,30 @@
 <!--
- - Licensed to the Apache Software Foundation (ASF) under one or more
- - contributor license agreements.  See the NOTICE file distributed with
- - this work for additional information regarding copyright ownership.
- - The ASF licenses this file to You under the Apache License, Version 2.0
- - (the "License"); you may not use this file except in compliance with
- - the License.  You may obtain a copy of the License at
- -
- -   http://www.apache.org/licenses/LICENSE-2.0
- -
- - Unless required by applicable law or agreed to in writing, software
- - distributed under the License is distributed on an "AS IS" BASIS,
- - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- - See the License for the specific language governing permissions and
- - limitations under the License.
- -->
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+-->
 
-# Iceberg Golang
+# Iceberg Go
+
+Iceberg Go is a go-native implementation for accessing iceberg tables.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/apache/iceberg-go.svg)](https://pkg.go.dev/github.com/apache/iceberg-go)
 
 `iceberg` is a Golang implementation of the [Iceberg table spec](https://iceberg.apache.org/spec/).
 
-## Build From Source
-
-### Prerequisites
-
-* Go 1.23 or later
-
-### Build
-
-```shell
-$ git clone https://github.com/apache/iceberg-go.git
-$ cd iceberg-go/cmd/iceberg && go build .
-```
 
 ## Feature Support / Roadmap
 
@@ -55,8 +47,8 @@ $ cd iceberg-go/cmd/iceberg && go build .
 | Get Partition Specs      |     X     |
 | Get Manifests            |     X     |
 | Create New Manifests     |     X     |
-| Plan Scan                |     x     |
-| Plan Scan for Snapshot   |     x     |
+| Plan Scan                |     X     |
+| Plan Scan for Snapshot   |     X     |
 
 ### Catalog Support
 
@@ -105,43 +97,7 @@ the table, the following tracks the current write support:
 | Row Delta         |         |
 
 
-### CLI Usage
-Run `go build ./cmd/iceberg` from the root of this repository to build the CLI executable, alternately you can run `go install github.com/apache/iceberg-go/cmd/iceberg` to install it to the `bin` directory of your `GOPATH`.
-
-The `iceberg` CLI usage is very similar to [pyiceberg CLI](https://py.iceberg.apache.org/cli/) \
-You can pass the catalog URI with `--uri` argument.
-
-Example:
-You can start the Iceberg REST API docker image which runs on default in port `8181`
-```
-docker pull apache/iceberg-rest-fixture:latest
-docker run -p 8181:8181 apache/iceberg-rest-fixture:latest
-```
-and run the `iceberg` CLI pointing to the REST API server.
-
-```
- ./iceberg --uri http://0.0.0.0:8181 list
-┌─────┐
-| IDs |
-| --- |
-└─────┘
-```
-**Create Namespace**
-```
-./iceberg --uri http://0.0.0.0:8181 create namespace taxitrips
-```
-
-**List Namespace**
-```
- ./iceberg --uri http://0.0.0.0:8181 list
-┌───────────┐
-| IDs       |
-| --------- |
-| taxitrips |
-└───────────┘
-
-
-```
-# Get in Touch
+## Get in Touch
 
 - [Iceberg community](https://iceberg.apache.org/community/)
+- [Iceberg-Go Slack](https://apache-iceberg.slack.com/archives/C05J3MJ42BD)
